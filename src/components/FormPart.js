@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { Box, TextField } from "@mui/material";
 import CustomButton from "./CustomButton";
-import { TroubleshootOutlined } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const FormPart = ({
   emailInput,
   onEmailChange,
   passwordInput,
   onPasswordChange,
-  onSubmit,
 }) => {
   // State variables for validation errors and form submission status
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Hook to access the history object for navigation
+  const navigate = useNavigate();
 
   // Function to handle form submission
   const handleSubmit = (event) => {
@@ -30,22 +32,22 @@ const FormPart = ({
     }
 
     // Password validation
-    // if (!passwordInput.trim()) {
-    //   setPasswordError("Password is required");
-    // } else if (passwordInput === " OR :num=:num") {
-    //   setPasswordError(" ");
-    // }
-    // //  else  {
-    // //   setPasswordError("");
-    // // }
-
-    // If both email and password are valid, submit the form
-    if (!emailError && !passwordError) {
-      onSubmit();
+    if (!passwordInput.trim()) {
+      setPasswordError("Password is required");
+    } else {
+      setPasswordError("");
     }
 
-    setIsSubmitting(TroubleshootOutlined);
+    // If both email and password are valid, navigate to the second page
+    if (!emailError && !passwordError) {
+      // Redirect to the second page
+      navigate("/second_page");
+    }
+
+    setIsSubmitting(false);
   };
+
+  const isButtonDisabled = isSubmitting || !!emailError || !!passwordError;
 
   return (
     <div>
@@ -55,9 +57,8 @@ const FormPart = ({
           fullWidth
           value={emailInput}
           onChange={onEmailChange}
-          error={Boolean(emailError)}
+          error={!!emailError}
           helperText={emailError}
-          disabled={isSubmitting}
           sx={{ my: 1 }}
         />
         <TextField
@@ -66,18 +67,15 @@ const FormPart = ({
           type="password"
           value={passwordInput}
           onChange={onPasswordChange}
-          error={Boolean(passwordError)}
+          error={!!passwordError}
           helperText={passwordError}
-          disabled={isSubmitting}
           sx={{ my: 1 }}
         />
         <CustomButton
           type="submit"
           variant="contained"
           fullWidth
-          disabled={
-            isSubmitting || Boolean(emailError) || Boolean(passwordError)
-          }
+          disabled={isButtonDisabled}
           sx={{ mt: 2 }}
         >
           {isSubmitting ? "Logging in..." : "Log in"}

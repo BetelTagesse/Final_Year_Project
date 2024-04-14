@@ -1,10 +1,11 @@
 import React from "react";
 import Button from "@mui/material/Button";
 
-const CustomButton = ({ children, ...rest }) => {
+const CustomButton = ({ children, onClick, ...rest }) => {
   return (
     <Button
       {...rest}
+      onClick={onClick}
       sx={{
         backgroundColor: "transparent",
         borderRadius: "4px",
